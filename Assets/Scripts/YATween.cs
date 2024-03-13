@@ -17,16 +17,18 @@ public class YATweeen : MonoBehaviour
     private float startTime;
     private float endTime;
     private float duration = 4.3f;
-
+    [SerializeField] AnimationCurve curve;  
     // Start is called before the first frame update
     private void Start()
     {
+        curve.ClearKeys();
+        
         lineRenderer = GetComponent<LineRenderer>();
         obj.transform.position = transform.position;
         //var Task = TweenValue(0, 30, 3);
         //Tween(startV, endV, 3);
 
-        obj.transform.Tween(startV, target, duration, eEaseType.OutBounce);
+        obj.transform.Tween(target, startV, duration, eEaseType.OutBounce);
         startTime = Time.time;
         endTime = Time.time + duration;
         //Debug.Log(curV);
