@@ -1,7 +1,54 @@
 ﻿using UnityEngine;
 
-class Easings
+public interface IEasingStrategy
 {
+    public float CalculateEasing(float t);
+}
+
+public class AnimationCurveEasing : IEasingStrategy
+{
+    private AnimationCurve curve;
+
+    public AnimationCurveEasing(AnimationCurve curve)
+    {
+        this.curve = curve;
+    }
+
+    public float CalculateEasing(float t)
+    {
+        return curve.Evaluate(t);
+    }
+}
+
+public class PredefinedEasing : IEasingStrategy
+{
+    private eEaseType easing;
+
+    public PredefinedEasing(eEaseType easing)
+    {
+        this.easing = easing;
+    }
+
+    public float CalculateEasing(float t)
+    {
+        return Easings.EaseValue(easing, t);
+    }
+}
+
+internal class Easings
+{
+    public static float EaseValue(eEaseType type, float value)
+    {
+        switch (type)
+        {
+            case eEaseType.Linear: return Linear(value);
+            case eEaseType.InSine: return InSine(value);
+            case eEaseType.OutSine: return OutSine(value);
+            case eEaseType.OutBounce: return OutBounce(value);
+            default: return Linear(value);
+        }
+    }
+
     // https://github.com/pixelflag/EasingTest/blob/master/Assets/script/Easing.cs
     public static float InSine(float t, float min = 0, float max = 1, float totaltime = 1)
     {

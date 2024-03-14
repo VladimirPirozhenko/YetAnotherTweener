@@ -1,14 +1,23 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
-class CoroutineTween : MonoBehaviour,ITween
+class CoroutineTween : MonoBehaviour, ITween
 {
-    public IEnumerator TweenCoroutine(Action<float> action, float duration, eEaseType easing, float from = 0, float to = 1)
+    private Coroutine tweenRoutine;
+    private IEasingStrategy easingStrategy = new PredefinedEasing(eEaseType.Linear);
+
+    public void Stop()
+    {
+        if (tweenRoutine != null)
+        {
+            StopCoroutine(tweenRoutine);
+            tweenRoutine = null;
+            Debug.Log("Coroutine Stopped");
+        }
+    }
+
+    private IEnumerator TweenCoroutine(Action<float> action, float duration, float from = 0, float to = 1)
     {
         float startValue = from;
         float currentValue = startValue;
@@ -21,6 +30,8 @@ class CoroutineTween : MonoBehaviour,ITween
 
         while (elapsed < duration)
         {
+            if (!Application.isPlaying)
+                Stop();
             if (currentValue == to)
                 break;
 
@@ -33,16 +44,29 @@ class CoroutineTween : MonoBehaviour,ITween
                 currentDelta01 = 1;
                 break;
             }
-            currentDelta01 = EaseApplier.Apply(easing, currentDelta01);//Easings.Linear(currentDelta01, from, to);
+            currentDelta01 = easingStrategy.CalculateEasing(currentDelta01);
             action?.Invoke(currentDelta01);
-            yield return null;  
+            yield return null;
         }
 
         action?.Invoke(currentDelta01);
     }
+
     public void TweenValue(Action<float> action, float duration, eEaseType easing, float from = 0, float to = 1)
     {
-        StartCoroutine(TweenCoroutine(action, duration, easing, from, to));     
+        if (tweenRoutine == null)
+        {
+            easingStrategy = new PredefinedEasing(easing);
+            tweenRoutine = StartCoroutine(TweenCoroutine(action, duration, from, to));
+        }
+    }
+
+    public void TweenValue(Action<float> action, float duration, AnimationCurve curve, float from = 0, float to = 1)
+    {
+        if (tweenRoutine == null)
+        {
+            easingStrategy = new AnimationCurveEasing(curve);
+            tweenRoutine = StartCoroutine(TweenCoroutine(action, duration, from, to));
+        }
     }
 }
-

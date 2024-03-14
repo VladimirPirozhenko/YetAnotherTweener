@@ -1,6 +1,11 @@
 using System;
+using UnityEngine;
 
 public interface ITween
 {
+    public void Stop();
+
     public void TweenValue(Action<float> action, float duration, eEaseType easing, float from = 0, float to = 1);
+
+    public void TweenValue(Action<float> action, float duration, AnimationCurve curve, float from = 0, float to = 1);
 }

@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+
 public static class TaskUtil
 {
     public static CancellationToken RefreshToken(ref CancellationTokenSource tokenSource)
@@ -15,9 +16,16 @@ public static class TaskUtil
 
 class AsyncTween : ITween
 {
-    //private CancellationToken cancellationToken;
-    private CancellationTokenSource cancellationTokenSource;
-    private async Task TweenValueAsync(Action<float> action, float duration, eEaseType easing, CancellationToken token, float from = 0, float to = 1)
+    private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+    private IEasingStrategy easingStrategy = new PredefinedEasing(eEaseType.Linear);
+
+    public void Stop()
+    {
+        cancellationTokenSource.Cancel();
+        Debug.Log("Async will be stopped");
+    }
+
+    private async Task TweenValueAsync(Action<float> action, float duration, CancellationToken token, float from = 0, float to = 1)
     {
         float startValue = from;
         float currentValue = startValue;
@@ -27,15 +35,12 @@ class AsyncTween : ITween
         float currentDelta01 = 0;
         if (duration <= 0)
             currentDelta01 = 1;
-       
+        try
+        {
             while (elapsed < duration)
-            {    
-            try
             {
                 if (!Application.isPlaying)
-                {
-                    cancellationTokenSource.Cancel();
-                }
+                    Stop();
                 if (currentValue == to)
                     break;
 
@@ -48,22 +53,40 @@ class AsyncTween : ITween
                     currentDelta01 = 1;
                     break;
                 }
-                currentDelta01 = EaseApplier.Apply(easing, currentDelta01);//Easings.Linear(currentDelta01, from, to);
+                currentDelta01 = easingStrategy.CalculateEasing(currentDelta01);
                 action?.Invoke(currentDelta01);
+
+                token.ThrowIfCancellationRequested();
                 await Task.Yield();
-            } 
-            catch (OperationCanceledException)
-            {
-                Debug.Log("Task cancelled");
             }
         }
-       
+        catch (OperationCanceledException e)
+        {
+            Debug.Log($"[TweenValueAsync cancelled]: " + e);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e);
+        }
+        finally
+        {
+            action?.Invoke(currentDelta01);
+        }
+
         action?.Invoke(currentDelta01);
     }
 
     public void TweenValue(Action<float> action, float duration, eEaseType easing, float from, float to)
     {
-        var task = TweenValueAsync(action, duration, easing, TaskUtil.RefreshToken(ref cancellationTokenSource), from, to);
-     
+        easingStrategy = new PredefinedEasing(easing);
+        var task = TweenValueAsync(action, duration, TaskUtil.RefreshToken(ref cancellationTokenSource), from, to);
+        task.ConfigureAwait(false);
+    }
+
+    public void TweenValue(Action<float> action, float duration, AnimationCurve curve, float from, float to)
+    {
+        easingStrategy = new AnimationCurveEasing(curve);
+        var task = TweenValueAsync(action, duration, TaskUtil.RefreshToken(ref cancellationTokenSource), from, to);
+        task.ConfigureAwait(false);
     }
 }
