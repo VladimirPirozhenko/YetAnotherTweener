@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 enum eTweenContextType
@@ -22,23 +23,26 @@ class TweenerContext
     public static ITween CreateTween(ref Transform t)
     {
         ITween tweenToCreate;
+        Func<Transform,ITween> createAsyncTween = (Transform t) => 
+        {
+            ITween tween = new AsyncTween();
+            MonoBehaviour mono = t.gameObject.AddComponent<EmptyMonoBehaviour>();
+            mono.destroyCancellationToken.Register(() => { tween.Stop(); });
+            return tween;
+        };
+
         switch (contextType)
         {
-            case eTweenContextType.Coroutine:
-                {
-                    GameObject go = new GameObject(t.name = "Tweener");
-                    tweenToCreate = go.AddComponent<CoroutineTween>();
-                    go.transform.SetParent(parent.transform);
-                    break;
-                }
+            case eTweenContextType.Coroutine: 
+                GameObject go = new GameObject(t.name + " Tweener");
+                tweenToCreate = go.AddComponent<CoroutineTween>();
+                go.transform.SetParent(parent.transform);
+                break;     
             case eTweenContextType.Async:
-                tweenToCreate = new AsyncTween();
-                //var o =  t.gameObject as MonoBehaviour;
-                //destroyCancellationToken.Register(() => { tweenToCreate.Stop(); });
+                tweenToCreate = createAsyncTween(t);  
                 break;
-
             default:
-                tweenToCreate = new AsyncTween();
+                tweenToCreate = createAsyncTween(t);
                 break;
         }
         TweenHandler.ComponentToTween[t] = tweenToCreate;

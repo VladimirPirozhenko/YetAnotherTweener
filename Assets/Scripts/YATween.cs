@@ -35,7 +35,7 @@ public class YATweeen : MonoBehaviour
 
     private void Awake()
     {
-        tweenerCtx = new TweenerContext(eTweenContextType.Async);
+        tweenerCtx = new TweenerContext(eTweenContextType.Coroutine);
     }
 
     private void Start()
@@ -49,12 +49,13 @@ public class YATweeen : MonoBehaviour
 
         //obj.transform.Tween(target, startV, duration, eEaseType.OutBounce);
         obj.transform.Tween(target, startV, duration, curve);
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 100; i++)
         {
-            for (int j = 0; j < 2; j++)
+            for (int j = 0; j < 10; j++)
             {
                 var newObj = Instantiate(obj, transform.position + new Vector3(i, i, j), transform.rotation);
-                newObj.transform.Tween(transform.position + new Vector3(i, i, 0), transform.position + new Vector3(0, 0, j) + new Vector3(0 + 10, 0 + 10, 0 + 10), 10, curve);
+                newObj.GetComponent<Renderer>().material.enableInstancing = true;
+                newObj.transform.Tween(transform.position + new Vector3(0, 0, 0), transform.position + new Vector3(i, i, j) + new Vector3(0 + 10, 0 + 10, 0 + 10), j, curve);
                 gameObjects.Add(newObj);
             }
         }

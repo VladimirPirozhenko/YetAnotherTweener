@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 public static class TaskUtil
@@ -21,7 +22,14 @@ class AsyncTween : ITween
 
     public void Stop()
     {
-        cancellationTokenSource.Cancel();
+        if(cancellationTokenSource.IsCancellationRequested)
+        {
+            Debug.Log("Async stop already requested");
+            return;
+        }
+           
+        cancellationTokenSource?.Cancel();
+        cancellationTokenSource.Dispose();
         Debug.Log("Async will be stopped");
     }
 
@@ -37,10 +45,10 @@ class AsyncTween : ITween
             currentDelta01 = 1;
         try
         {
-            while (elapsed < duration)
+            while (Application.isPlaying && elapsed < duration)
             {
-                if (!Application.isPlaying)
-                    Stop();
+                //if (!Application.isPlaying)
+                //    Stop();
                 if (currentValue == to)
                     break;
 

@@ -3,14 +3,8 @@
 using System.Threading;
 using UnityEngine;
 
-internal static class TweenableExtentions
-{
-    internal static CancellationToken GetDestroyCancellationToken(this MonoBehaviour value)
-    {
-        // UNITY_2022_2 and newer
-        return value.destroyCancellationToken;
-    }
-
+static class TweenableExtentions
+{ 
     public static void Tween(this Transform t, Vector3 from, Vector3 to, float duration, AnimationCurve curve)
     {
         var tween = TweenerContext.CreateTween(ref t);
