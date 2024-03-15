@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json.Serialization;
+using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Pool;
+using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 class TweenHandler
 {
@@ -238,6 +241,18 @@ class TweenHandler
     }
     #endregion
 
+    #region TweenColor
+    public ITween TweenColor(Action<Color> action,Color from, Color to, float duration, IEasingStrategy strategy)
+    {
+        ITween tween = CreateTween();
+        Color color = from;
+        
+        tween.TweenValue(action, duration, strategy,from,to);
+        //action?.Invoke(color);
+        return tween;
+    }
+
+    #endregion
     public void StopTween(Component c)
     {
         if (componentToTween.ContainsKey(c))
