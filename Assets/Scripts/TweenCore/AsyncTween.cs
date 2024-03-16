@@ -88,10 +88,10 @@ public void Stop()
 
         action?.Invoke(currentDelta01);
     }
-    private async Task TweenValueAsync<ColorWrapper>(Action<ColorWrapper> action, float duration, CancellationToken token, ColorWrapper from, ColorWrapper to) where T :  ILerpable<T>
+    private async Task TweenValueAsync<T>(Action<T> action, float duration, CancellationToken token, T from, T to) where T :  ILerpable<T>
     {
-        ColorWrapper startValue = from;
-        ColorWrapper currentValue = startValue;
+        T startValue = from;
+        T currentValue = startValue;
 
         float startTime = Time.time;
         float elapsed = 0;
@@ -115,7 +115,7 @@ public void Stop()
                     break;
                 }
                 currentDelta01 = easingStrategy.CalculateEasing(currentDelta01);
-                currentValue = currentValue.Lerp(from.value, to.value, currentDelta01);  
+                currentValue = currentValue.Lerp(from, to, currentDelta01);  
                 action?.Invoke(currentValue);
 
                 token.ThrowIfCancellationRequested();

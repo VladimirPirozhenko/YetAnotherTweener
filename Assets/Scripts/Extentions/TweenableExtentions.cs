@@ -1,33 +1,29 @@
-﻿#define AsyncTween
-
-using Newtonsoft.Json.Serialization;
-using System;
+﻿
 using System.Security.Cryptography;
+using UnityEditor.Build;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
-public interface ILerpable<T>
+
+public interface ILerpable<T> where T : ILerpable<T>
 {
     public T Lerp(T from,T to,float t);
 }
 
-public class ColorWrapper : ILerpable<Color>
+
+public class ColorWrapper : ILerpable<ColorWrapper>
 {
     public Color color;
     public ColorWrapper(Color color)
     {
         this.color = color;
     }
-    public void Lerp(ColorWrapper from, ColorWrapper to, float t)
-    {
-        color =  Color.Lerp(from.color, to.color, t);
-    }
 
-    public Color Lerp(Color from, Color to, float t)
+    public Color val { get => color; set => color = value; }
+
+
+    public ColorWrapper Lerp(ColorWrapper from, ColorWrapper to, float t) 
     {
-        color = Color.Lerp(from, to, t);
-        return color;   
+       return new ColorWrapper(Color.Lerp(from.color,to.color,t));    
     }
 }
 
