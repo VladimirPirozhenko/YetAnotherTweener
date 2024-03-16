@@ -1,38 +1,8 @@
 ﻿
-using System.Security.Cryptography;
-using UnityEditor.Build;
 using UnityEngine;
-
-
-public interface ILerpable<T> where T : ILerpable<T>
-{
-    public T Lerp(T from,T to,float t);
-}
-
-
-public class ColorWrapper : ILerpable<ColorWrapper>
-{
-    public Color color;
-    public ColorWrapper(Color color)
-    {
-        this.color = color;
-    }
-
-    public Color val { get => color; set => color = value; }
-
-
-    public ColorWrapper Lerp(ColorWrapper from, ColorWrapper to, float t) 
-    {
-       return new ColorWrapper(Color.Lerp(from.color,to.color,t));    
-    }
-}
-
 
 static class TweenableExtentions
 {
-    #region TweenColor
-
-    #endregion
 
     #region TweenMove
     public static ITween TweenMove(this Component c, Vector3 from, Vector3 to, float duration, IEasingStrategy easingStrategy)
@@ -182,6 +152,11 @@ static class TweenableExtentions
     public static void StopTween(this Component c)
     {
         TweenerContext.handler.StopTween(c);
+    }
+
+    public static void StopTweens(this Component c)
+    {
+        TweenerContext.handler.StopTweens(c);
     }
 
     public static bool TryGetTween(this Component c, out ITween tween)

@@ -27,7 +27,7 @@ class AsyncTween : ITween
         Debug.Log("Async tween deleted");
     }    
 
-public void Stop()
+    public void Stop()
     {
         if (cancellationTokenSource.IsCancellationRequested)
         {
@@ -102,8 +102,8 @@ public void Stop()
         {
             while (Application.isPlaying && elapsed < duration)
             {
-                //if (currentValue == to)
-                //    break;
+                if (currentValue.Equals(to))
+                    break;
 
                 elapsed = Time.time - startTime;
                 currentDelta01 = elapsed / duration;
@@ -160,16 +160,36 @@ public void Stop()
 
     public void TweenValue(Action<float> action, float duration, float from = 0, float to = 1)
     {
+        this.easingStrategy = easingStrategy;
         var task = TweenValueAsync(action, duration, TaskUtil.RefreshToken(ref cancellationTokenSource), from, to);
         task.ConfigureAwait(false);
     }
 
     public void TweenValue(Action<Color> action, float duration, IEasingStrategy easingStrategy, Color from, Color to)
     {
-        ColorWrapper fromWrapper = new ColorWrapper(from);
-        ColorWrapper toWrapper = new ColorWrapper(to);
-        Action<ColorWrapper> colorWrapperAction = (color) => { action?.Invoke(color.color); };
-        var task = TweenValueAsync<ColorWrapper>(colorWrapperAction, duration, TaskUtil.RefreshToken(ref cancellationTokenSource), fromWrapper, toWrapper);
+        this.easingStrategy = easingStrategy;
+        var task = TweenValueAsync((c) => { action?.Invoke(c.color); }, duration, TaskUtil.RefreshToken(ref cancellationTokenSource), new ColorWrapper(from), new ColorWrapper(to));
+        task.ConfigureAwait(false);
+    }
+
+    public void TweenValue(Action<Vector2> action, float duration, IEasingStrategy easingStrategy, Vector2 from, Vector2 to)
+    {
+        this.easingStrategy = easingStrategy;
+        var task = TweenValueAsync((v) => { action?.Invoke(v.vec); }, duration, TaskUtil.RefreshToken(ref cancellationTokenSource), new Vector2Wrapper(from), new Vector2Wrapper(to));
+        task.ConfigureAwait(false);
+    }
+
+    public void TweenValue(Action<Vector3> action, float duration, IEasingStrategy easingStrategy, Vector3 from, Vector3 to)
+    {
+        this.easingStrategy = easingStrategy;
+        var task = TweenValueAsync((v) => { action?.Invoke(v.vec); }, duration, TaskUtil.RefreshToken(ref cancellationTokenSource), new Vector3Wrapper(from), new Vector3Wrapper(to));
+        task.ConfigureAwait(false);
+    }
+
+    public void TweenValue(Action<Vector4> action, float duration, IEasingStrategy easingStrategy, Vector4 from, Vector4 to)
+    {
+        this.easingStrategy = easingStrategy;
+        var task = TweenValueAsync((v) => { action?.Invoke(v.vec); }, duration, TaskUtil.RefreshToken(ref cancellationTokenSource), new Vector4Wrapper(from), new Vector4Wrapper(to));
         task.ConfigureAwait(false);
     }
 }

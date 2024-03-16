@@ -5,7 +5,7 @@ using UnityEngine;
 
 class TweenHandler
 {
-    private Dictionary<Component, ITween> componentToTween = new Dictionary<Component, ITween>();
+    private Dictionary<Component, List<ITween>> componentToTween = new Dictionary<Component, List<ITween>>();
     private List<ITween> unattachedTweens = new List<ITween>();
     private eTweenContextType contextType = eTweenContextType.Async;
     private GameObject parent;
@@ -20,6 +20,7 @@ class TweenHandler
         this.contextType = contextType;
     }
 
+    #region TweenCreation
     public ITween CreateTween(Component c)
     {
         ITween tweenToCreate;
@@ -76,35 +77,23 @@ class TweenHandler
         return tweenToCreate;
     }
 
-    public void RegisterTween(Component c,ITween tween)
+    private void RegisterTween(Component c,ITween tween)
     {
-        if (componentToTween.ContainsKey(c))
-            Debug.LogError($"Tween already exitsts, overridding tween for {c.name}");
-        componentToTween[c] = tween;
+        //if (componentToTween.ContainsKey(c))
+        //    Debug.LogError($"Tween already exitsts, overridding tween for {c.name}");
+        if (!componentToTween.ContainsKey(c))
+            componentToTween.Add(c,new List<ITween>());
+
+        componentToTween[c].Add(tween);
     }
 
-    public void RegisterTween(ITween tween)
+    private void RegisterTween(ITween tween)
     {
         unattachedTweens.Add(tween);    
     }
 
-    public void StopAllTweens()
-    {
-        foreach (var entry in componentToTween)
-            entry.Value.Stop();
-        foreach (var tween in unattachedTweens)
-            tween.Stop();
-    }
+    #endregion
 
-    public ITween GetOrCreateTween(Component c)
-    {
-        ITween tween;
-        if (componentToTween.ContainsKey(c))
-            tween = componentToTween[c];
-        else
-            tween = CreateTween(c);
-        return tween;
-    }
     #region Tween
     public ITween Tween(Action<float> action, float duration)
     {
@@ -135,7 +124,7 @@ class TweenHandler
     #region TweenMove
     public ITween TweenMove(Component c, Vector3 to, float duration, IEasingStrategy strategy)
     {
-        ITween tween = GetOrCreateTween(c);
+        ITween tween = CreateTween(c);
         Vector3 from = c.transform.position;
         tween.TweenValue((v) => c.transform.position = Vector3.Lerp(from, to, v), duration, strategy);
         return tween;
@@ -143,7 +132,7 @@ class TweenHandler
 
     public ITween TweenMove(Component c, Vector3 from, Vector3 to, float duration, IEasingStrategy strategy)
     {
-        ITween tween = GetOrCreateTween(c);
+        ITween tween = CreateTween(c);
         tween.TweenValue((v) => c.transform.position = Vector3.Lerp(from, to, v), duration, strategy);
         return tween;
     }
@@ -153,14 +142,14 @@ class TweenHandler
     #region TweenMoveLocal
     public ITween TweenMoveLocal(Component c, Vector3 to, float duration, IEasingStrategy strategy)
     {
-        ITween tween = GetOrCreateTween(c);
+        ITween tween = CreateTween(c);
         Vector3 from = c.transform.localPosition;
         tween.TweenValue((v) => c.transform.localPosition = Vector3.Lerp(from, to, v), duration, strategy);
         return tween;
     }
     public ITween TweenMoveLocal(Component c, Vector3 from, Vector3 to, float duration, IEasingStrategy strategy)
     {
-        ITween tween = GetOrCreateTween(c);
+        ITween tween = CreateTween(c);
         tween.TweenValue((v) => c.transform.localPosition = Vector3.Lerp(from, to, v), duration, strategy);
         return tween;
     }
@@ -192,7 +181,7 @@ class TweenHandler
     #region TweenScale
     public ITween TweenScale(Component c, Vector3 to, float duration, IEasingStrategy strategy)
     {
-        ITween tween = GetOrCreateTween(c);
+        ITween tween = CreateTween(c);
         Vector3 from = c.transform.localScale;
         tween.TweenValue((v) => c.transform.localScale = Vector3.Lerp(from, to, v), duration, strategy);
         return tween;
@@ -200,7 +189,7 @@ class TweenHandler
 
     public ITween TweenScale(Component c, Vector3 from, Vector3 to, float duration, IEasingStrategy strategy)
     {
-        ITween tween = GetOrCreateTween(c);
+        ITween tween = CreateTween(c);
         tween.TweenValue((v) => c.transform.localScale = Vector3.Lerp(from, to, v), duration, strategy);
         return tween;
     }
@@ -210,7 +199,7 @@ class TweenHandler
     #region TweenRotate
     public ITween TweenRotate(Component c, Quaternion to, float duration, IEasingStrategy strategy)
     {
-        ITween tween = GetOrCreateTween(c);
+        ITween tween = CreateTween(c);
         Quaternion from = c.transform.rotation;
         tween.TweenValue((v) => c.transform.rotation = Quaternion.Slerp(from, to, v), duration, strategy);
         return tween;
@@ -218,13 +207,13 @@ class TweenHandler
 
     public ITween TweenRotate(Component c, Quaternion from, Quaternion to, float duration, IEasingStrategy strategy)
     {
-        ITween tween = GetOrCreateTween(c);
+        ITween tween = CreateTween(c);
         tween.TweenValue((v) => c.transform.rotation = Quaternion.Slerp(from, to, v), duration, strategy);
         return tween;
     }
     public ITween TweenRotateLocal(Component c, Quaternion to, float duration, IEasingStrategy strategy)
     {
-        ITween tween = GetOrCreateTween(c);
+        ITween tween = CreateTween(c);
         Quaternion from = c.transform.localRotation;
         tween.TweenValue((v) => c.transform.localRotation = Quaternion.Slerp(from, to, v), duration, strategy);
         return tween;
@@ -232,7 +221,7 @@ class TweenHandler
 
     public ITween TweenRotateLocal(Component c, Quaternion from, Quaternion to, float duration, IEasingStrategy strategy)
     {
-        ITween tween = GetOrCreateTween(c);
+        ITween tween = CreateTween(c);
         tween.TweenValue((v) => c.transform.localRotation = Quaternion.Slerp(from, to, v), duration, strategy);
         return tween;
     }
@@ -242,27 +231,74 @@ class TweenHandler
     public ITween TweenColor(Action<Color> action,Color from, Color to, float duration, IEasingStrategy strategy)
     {
         ITween tween = CreateTween();
-        Color color = from;
-        
         tween.TweenValue(action, duration, strategy,from,to);
-        //action?.Invoke(color);
         return tween;
     }
-
     #endregion
-    public void StopTween(Component c)
+
+    #region TweenVector
+    public ITween TweenVector2(Action<Vector2> action, Vector2 from, Vector2 to, float duration, IEasingStrategy strategy)
+    {
+        ITween tween = CreateTween();
+        tween.TweenValue(action, duration, strategy, from, to);
+        return tween;
+    }
+    public ITween TweenVector3(Action<Vector3> action, Vector3 from, Vector3 to, float duration, IEasingStrategy strategy)
+    {
+        ITween tween = CreateTween();
+        tween.TweenValue(action, duration, strategy, from, to);
+        return tween;
+    }
+    public ITween TweenVector4(Action<Vector4> action, Vector4 from, Vector4 to, float duration, IEasingStrategy strategy)
+    {
+        ITween tween = CreateTween();
+        tween.TweenValue(action, duration, strategy, from, to);
+        return tween;
+    }
+    #endregion
+
+    public void StopAllTweens()
+    {
+        foreach (var entry in componentToTween)
+        {
+            List<ITween> tweens = entry.Value; 
+            for (var i = 0; i < tweens.Count;i++)
+            {
+                tweens[i].Stop();   
+            }
+        }
+            
+        foreach (var tween in unattachedTweens)
+            tween.Stop();
+    }
+
+    public void StopTweens(Component c)
     {
         if (componentToTween.ContainsKey(c))
-            componentToTween[c].Stop();
+        {
+            List<ITween> tweens = componentToTween[c];
+            for (var i = 0; i < tweens.Count; i++)
+            {
+                tweens[i].Stop();
+            }
+        }
         else
             Debug.LogError($"No tween for transform {c.name} exists");
     }
 
-    public bool TryGetTween(Component c, out ITween tween)
+    public void StopTween(Component c)
+    {
+        if (componentToTween.ContainsKey(c))
+            componentToTween[c][0].Stop();
+        else
+            Debug.LogError($"No tween for transform {c.name} exists");
+    }
+
+    public bool TryGetTween(Component c, out ITween tween)//Get first tween of that component
     {
         if (componentToTween.ContainsKey(c))
         {
-            tween = componentToTween[c];
+            tween = componentToTween[c][0];
             return true;
         }
         Debug.LogError($"No tween for transform {c.name} exists");
