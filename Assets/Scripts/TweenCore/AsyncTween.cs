@@ -160,7 +160,6 @@ class AsyncTween : ITween
 
     public void TweenValue(Action<float> action, float duration, float from = 0, float to = 1)
     {
-        this.easingStrategy = easingStrategy;
         var task = TweenValueAsync(action, duration, TaskUtil.RefreshToken(ref cancellationTokenSource), from, to);
         task.ConfigureAwait(false);
     }
