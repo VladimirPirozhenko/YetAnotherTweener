@@ -18,7 +18,7 @@ public class YATweeenExample : MonoBehaviour
     [SerializeField] private AnimationCurve curve;
 
     private List<Transform> gameObjects = new List<Transform>();
-    private Vector2 vec2 = new Vector2(20, 0);
+    private Vector2 vecToTween = new Vector2(20, 0);
 
     private void Awake()
     {
@@ -40,11 +40,11 @@ public class YATweeenExample : MonoBehaviour
         obj.TweenScale(new Vector3(4, 4, 4), 5f, new Easing(eEaseType.InSine));
 
 
-        var start = Color.blue;
-        var end = Color.red;
+        var from = Color.blue;
+        var to = Color.red;
 
-        TweenerContext.handler.TweenColor((color) => { img.color = color; }, start, end, 3, new AnimationCurveEasing(curve));
-        TweenerContext.handler.TweenVector2((vec) => { vec2 = vec; }, vec2, new Vector2(0, 5), 3, new AnimationCurveEasing(curve));
+        TweenerContext.handler.TweenColor((color) => { img.color = color; }, from, to, 3, new AnimationCurveEasing(curve));
+        TweenerContext.handler.TweenVector2((vec) => { vecToTween = vec; }, vecToTween, new Vector2(0, 5), 3, new AnimationCurveEasing(curve));
 
         bool isManyObjectsInOneTween = true;
         
@@ -52,7 +52,7 @@ public class YATweeenExample : MonoBehaviour
         {
             foreach (var obj in gameObjects)
             {
-                TweenerContext.handler.Tween(t => { obj.position = Vector3.Lerp(new Vector3(0, 0, 0), new Vector3(10, 10, 10), EaseFunc.Linear(t)); }, 50, new Easing(eEaseType.Linear));
+                TweenerContext.handler.Tween(t => { obj.position = Vector3.Lerp(new Vector3(0, 0, 0), new Vector3(10, 10, 10), EaseFunc.Linear(t)); }, 50);
             }
         }
         else 
