@@ -6,6 +6,7 @@ using UnityEngine;
 class TweenHandler
 {
     private Dictionary<Component, List<ITween>> componentToTween = new Dictionary<Component, List<ITween>>();
+
     private List<ITween> unattachedTweens = new List<ITween>();
     private eTweenContextType contextType = eTweenContextType.Async;
     private GameObject parent;
@@ -27,8 +28,23 @@ class TweenHandler
         Func<Component, ITween> createAsyncTween = (Component c) =>
         {
             ITween tween = new AsyncTween();
-            MonoBehaviour mono = c.gameObject.AddComponent<EmptyMonoBehaviour>();
-            mono.destroyCancellationToken.Register(() => { tween.Stop(); });
+            EmptyMonoBehaviour emptyMono = null;
+            if (!c.gameObject.TryGetComponent(out emptyMono))
+                emptyMono = c.gameObject.AddComponent<EmptyMonoBehaviour>();
+
+            emptyMono.destroyCancellationToken.Register(() =>
+            {
+                if (componentToTween.ContainsKey(c))
+                {
+                    List<ITween> existingTweens = componentToTween[c];    
+                    for (int i = 0; i < existingTweens.Count;i++)
+                    {
+                        existingTweens[i].Stop();   
+                        //existingTweens[i] = null;
+                    }
+                    //componentToTween[c].Clear();
+                }
+            });
             return tween;
         };
 

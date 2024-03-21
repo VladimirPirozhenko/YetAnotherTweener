@@ -89,21 +89,21 @@ internal class EaseFunc
         return (max - min) * t / totaltime + min;
     }
 
-    public static float InQuad(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float InQuad(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t /= totaltime;
         return max * t * t + min;
     }
 
-    public static float OutQuad(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float OutQuad(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t /= totaltime;
         return -max * t * (t - 2) + min;
     }
 
-    public static float InOutQuad(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float InOutQuad(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t /= totaltime / 2;
@@ -113,21 +113,21 @@ internal class EaseFunc
         return -max / 2 * (t * (t - 2) - 1) + min;
     }
 
-    public static float InCubic(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float InCubic(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t /= totaltime;
         return max * t * t * t + min;
     }
 
-    public static float OutCubic(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float OutCubic(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t = t / totaltime - 1;
         return max * (t * t * t + 1) + min;
     }
 
-    public static float InOutCubic(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float InOutCubic(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t /= totaltime / 2;
@@ -137,21 +137,21 @@ internal class EaseFunc
         return max / 2 * (t * t * t + 2) + min;
     }
 
-    public static float InQuart(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float InQuart(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t /= totaltime;
         return max * t * t * t * t + min;
     }
 
-    public static float OutQuart(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float OutQuart(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t = t / totaltime - 1;
         return -max * (t * t * t * t - 1) + min;
     }
 
-    public static float InOutQuart(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float InOutQuart(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t /= totaltime / 2;
@@ -161,21 +161,21 @@ internal class EaseFunc
         return -max / 2 * (t * t * t * t - 2) + min;
     }
 
-    public static float InQuint(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float InQuint(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t /= totaltime;
         return max * t * t * t * t * t + min;
     }
 
-    public static float OutQuint(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float OutQuint(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t = t / totaltime - 1;
         return max * (t * t * t * t * t + 1) + min;
     }
 
-    public static float InOutQuint(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float InOutQuint(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t /= totaltime / 2;
@@ -185,37 +185,37 @@ internal class EaseFunc
         return max / 2 * (t * t * t * t * t + 2) + min;
     }
 
-    public static float InSine(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float InSine(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         return -max * Mathf.Cos(t * (Mathf.PI * 90 / 180) / totaltime) + max + min;
     }
 
-    public static float OutSine(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float OutSine(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         return max * Mathf.Sin(t * (Mathf.PI * 90 / 180) / totaltime) + min;
     }
 
-    public static float InOutSine(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float InOutSine(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         return -max / 2 * (Mathf.Cos(t * Mathf.PI / totaltime) - 1) + min;
     }
 
-    public static float InExp(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float InExp(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         return t == 0.0 ? min : max * Mathf.Pow(2, 10 * (t / totaltime - 1)) + min;
     }
 
-    public static float OutExp(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float OutExp(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         return t == totaltime ? max + min : max * (-Mathf.Pow(2, -10 * t / totaltime) + 1) + min;
     }
 
-    public static float InOutExp(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float InOutExp(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         if (t == 0.0f) return min;
         if (t == totaltime) return max;
@@ -228,21 +228,21 @@ internal class EaseFunc
         return max / 2 * (-Mathf.Pow(2, -10 * t) + 2) + min;
     }
 
-    public static float InCirc(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float InCirc(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t /= totaltime;
         return -max * (Mathf.Sqrt(1 - t * t) - 1) + min;
     }
 
-    public static float OutCirc(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float OutCirc(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t = t / totaltime - 1;
         return max * Mathf.Sqrt(1 - t * t) + min;
     }
 
-    public static float InOutCirc(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float InOutCirc(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t /= totaltime / 2;
@@ -252,7 +252,7 @@ internal class EaseFunc
         return max / 2 * (Mathf.Sqrt(1 - t * t) + 1) + min;
     }
 
-    public static float InElastic(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float InElastic(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t /= totaltime;
@@ -278,12 +278,12 @@ internal class EaseFunc
         return -(a * Mathf.Pow(2, 10 * t) * Mathf.Sin((t * totaltime - s) * (2 * Mathf.PI) / p)) + min;
     }
 
-    public static float OutElastic(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float OutElastic(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t /= totaltime;
 
-        float s = 1.70158f;
+        float s = 0;//1.70158f;
         float p = totaltime * 0.3f; ;
         float a = max;
 
@@ -303,7 +303,7 @@ internal class EaseFunc
         return a * Mathf.Pow(2, -10 * t) * Mathf.Sin((t * totaltime - s) * (2 * Mathf.PI) / p) + max + min;
     }
 
-    public static float InOutElastic(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float InOutElastic(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t /= totaltime / 2;
@@ -334,21 +334,21 @@ internal class EaseFunc
         return a * Mathf.Pow(2, -10 * t) * Mathf.Sin((t * totaltime - s) * (2 * Mathf.PI) / p) * 0.5f + max + min;
     }
 
-    public static float InBack(float t, float s = 1, float totaltime = 1, float min = 1, float max = 1)
+    public static float InBack(float t, float s = 1, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t /= totaltime;
         return max * t * t * ((s + 1) * t - s) + min;
     }
 
-    public static float OutBack(float t, float s = 1, float totaltime = 1, float min = 1, float max = 1)
+    public static float OutBack(float t, float s = 1, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t = t / totaltime - 1;
         return max * (t * t * ((s + 1) * t + s) + 1) + min;
     }
 
-    public static float InOutBack(float t, float s = 1, float totaltime = 1, float min = 1, float max = 1)
+    public static float InOutBack(float t, float s = 1, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         s *= 1.525f;
@@ -359,13 +359,13 @@ internal class EaseFunc
         return max / 2 * (t * t * ((s + 1) * t + s) + 2) + min;
     }
 
-    public static float InBounce(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float InBounce(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         return max - OutBounce(totaltime - t, totaltime, 0, max) + min;
     }
 
-    public static float OutBounce(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float OutBounce(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         max -= min;
         t /= totaltime;
@@ -391,7 +391,7 @@ internal class EaseFunc
         }
     }
 
-    public static float InOutBounce(float t, float totaltime = 1, float min = 1, float max = 1)
+    public static float InOutBounce(float t, float totaltime = 1, float min = 0, float max = 1)
     {
         if (t < totaltime / 2)
         {

@@ -1,176 +1,80 @@
-using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
-using UnityEngine.UIElements.Experimental;
+
 
 //TODO:
-//ANIMATION CURVES
-//REST OF THE EASINGS
 //DELAYS
 //CHANGING VALUES
 //INVERT TWEENS
 //SEQUENCING
+//EXAMPLE USAGE
 
-public class YATweeen : MonoBehaviour
+public class YATweeenExample : MonoBehaviour 
 {
     [SerializeField] private Transform obj;
     [SerializeField] private UnityEngine.UI.Button button;
     [SerializeField] private UnityEngine.UI.Image img;
-    private Vector3 startV = Vector3.zero;
-    private Vector3 endV = Vector3.one;
-    private Vector3 curV = Vector3.zero;
-
-    private LineRenderer lineRenderer;
-    private Vector3 target = new Vector3(0, 5, 0);
-    private float startTime;
-    private float endTime;
-    private float duration = 4.3f;
+    [SerializeField] private int testObjectCount;
     [SerializeField] private AnimationCurve curve;
 
-    // Start is called before the first frame update
     private List<Transform> gameObjects = new List<Transform>();
-
-    private TweenerContext tweenerCtx;
+    private Vector2 vec2 = new Vector2(20, 0);
 
     private void Awake()
     {
-        tweenerCtx = new TweenerContext(eTweenContextType.Async);
+        TweenerContext.SetContextType(eTweenContextType.Async);
     }
 
-    Vector2 vec2 = new Vector2(20,0);
     private void Start()
     {
-        //  curve.ClearKeys();
-
-        lineRenderer = GetComponent<LineRenderer>();
         obj.transform.position = transform.position;
-        //var Task = TweenValue(0, 30, 3);
-        //Tween(startV, endV, 3);
-
-        //obj.transform.Tween(target, startV, duration, eEaseType.OutBounce);
-        //obj.transform.Tween(target, startV, duration, curve);
-        int rows = 100;
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < testObjectCount; i++)
         {
-            for (int j = 0; j < rows; j++)
-            {
-                var newObj = Instantiate(obj, transform.position + new Vector3(0, 0, 0), transform.rotation);
-                // newObj.GetComponent<Renderer>().material.enableInstancing = true;
-                //newObj.transform.TweenMove( new Vector3(0, 0, 0), transform.position + new Vector3(0, 0, 0) + new Vector3(0 + 10, 0 + 10, 0 + 10), 50, new Easing(eEaseType.Linear));
-                // newObj.transform.TweenRotate(Quaternion.Euler(0, 0, 0), Quaternion.Euler(i, j, i), 5, new AnimationCurveEasing(curve));
-                //newObj.transform.TweenScale(new Vector3(0, 0, 0), transform.position + new Vector3(i, i, j) + new Vector3(0 + 10, 0 + 10, 0 + 10), 5, new AnimationCurveEasing(curve));
-                // gameObjects[rows * i + j] = newObj;
-                gameObjects.Add(newObj);
-            }
+            var newObj = Instantiate(obj, transform.position + new Vector3(0, 0, 0), transform.rotation);
+            gameObjects.Add(newObj);
         }
-        // obj.transform.TweenMove(new Vector3(0, 0, 0), transform.position + new Vector3(0, 0, 0) + new Vector3(0 + 10, 0 + 10, 0 + 10), 5,curve);
-        //ITween tween = TweenerContext.handler.Tween(t =>
-        //{
-        //    var start = Color.blue;
-        //    var end = Color.red;
-        //    //var vectorCol = Vector4.Lerp(start, end, EaseFunc.Linear(t));
-        //    img.color = Vector4.Lerp(start, end, EaseFunc.Linear(t));
+
+  
+        obj.TweenMove(new Vector3(0, 5, 0), 5f, curve);
+        obj.TweenRotate(Quaternion.Euler(0, 44.4567f, 0), 5f, eEaseType.InOutBounce);
+        obj.TweenScale(new Vector3(4, 4, 4), 5f, new Easing(eEaseType.InSine));
 
 
-        //},5f);
         var start = Color.blue;
         var end = Color.red;
-        //img.color.TweenColor(start, end, 5f, new AnimationCurveEasing(curve));
-        //(color) => { img.color = color; }
+
         TweenerContext.handler.TweenColor((color) => { img.color = color; }, start, end, 3, new AnimationCurveEasing(curve));
         TweenerContext.handler.TweenVector2((vec) => { vec2 = vec; }, vec2, new Vector2(0, 5), 3, new AnimationCurveEasing(curve));
 
-        //foreach (var obj in gameObjects)
-        //{
-        //    TweenerContext.handler.Tween(t => { obj.position = Vector3.Lerp(new Vector3(0, 0, 0), new Vector3(10, 10, 10), EaseFunc.Linear(t)); }, 50, new Easing(eEaseType.Linear));
-        //}
-
-
-        TweenerContext.handler.Tween(t =>
+        bool isManyObjectsInOneTween = true;
+        
+        if (!isManyObjectsInOneTween)
         {
-            for (int i = 0; i <  gameObjects.Count; i++)
+            foreach (var obj in gameObjects)
             {
-                gameObjects[i].position = Vector3.Lerp(new Vector3(0, 0, 0),
-                    new Vector3(10, 10, 10), EaseFunc.Linear(t));
+                TweenerContext.handler.Tween(t => { obj.position = Vector3.Lerp(new Vector3(0, 0, 0), new Vector3(10, 10, 10), EaseFunc.Linear(t)); }, 50, new Easing(eEaseType.Linear));
             }
-        }, 50);
+        }
+        else 
+        {
+            TweenerContext.handler.Tween(t =>
+            {
+                for (int i = 0; i < gameObjects.Count; i++)
+                {
+                    gameObjects[i].position = Vector3.Lerp(new Vector3(0, 0, 0),
+                        new Vector3(10, 10, 10), EaseFunc.Linear(t));
+                }
+            }, 50);
+        }
 
-
-
-        // TweenerContext.handler.TweenVector3((pos) => { obj.transform.position = pos; }, new Vector3(0,0,0), new Vector3(0, 5, 0), 3, new AnimationCurveEasing(curve));
-        //TweenerContext.handler.TweenColor((color) => { img.color = color; }, start, end, 3, new AnimationCurveEasing(curve));
-
-        // button.transform.localPosition = new Vector3(0, 5, 0);
-        //   button.GetComponent<RectTransform>().localPosition = new Vector3(0, 5, 0);
-        // button.TweenMove(new Vector3(0,200,0), 5, eEaseType.OutSine);    
-        // button.TweenMove(new Vector3(0, 200, 0), 5, new PredefinedEasing(eEaseType.InSine));
-        //var start = button.transform.localPosition;
-        //ITween tween = TweenerContext.handler.Tween(t =>
-        //{
-
-        //    for (int i = 0; i < 500; i++)
-        //    {
-        //        for (int j = 0; j < rows; j++)
-        //        {
-        //           // Action<float> action = (t) =>
-        //           // {
-        //           // gameObjects[rows * i + j].transform.position = Vector3.Lerp(new Vector3(0, 0, 0), new Vector3(i, i, j) + new Vector3(0 + 10, 0 + 10, 0 + 10), Easings.Linear(t));
-
-        //           // };
-        //           // tween.TweenValue(action, 5);
-        //        }
-        //    }
-        //  obj.transform.localScale = Vector3.Lerp(new Vector3(0.5f, 0.5f, 0.5f), endV, Easings.Linear(t));
-
-        // button.transform.localPosition = Vector3.Lerp(start, new Vector3(0.5f, 300f, 0.5f), Easings.Linear(t));
-        // button.transform.localScale = Vector3.Lerp(new Vector3(0.5f, 0.5f, 0.5f), endV, curve.Evaluate(t));
-        // }, 5f);
-        //ITween tween = new AsyncTween();
-        //for (int i = 0; i < 500; i++)
-        //{
-        //    for (int j = 0; j < rows; j++)
-        //    {
-        //        Action<float> action = (t) =>
-        //        {
-        //            gameObjects[rows * i + j].transform.position = Vector3.Lerp(new Vector3(0, 0, 0), new Vector3(i, i, j) + new Vector3(0 + 10, 0 + 10, 0 + 10), Easings.Linear(t));
-
-        //        };
-        //        tween.TweenValue(action, 5);
-        //    }
-        //}
-
-        startTime = Time.time;
-        endTime = Time.time + duration;
-
-        //Debug.Log(curV);
+        button.TweenScale(new Vector3(3, 3, 3), 5f, new AnimationCurveEasing(curve));
     }
 
-    // Update is called once per frame
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            //obj.transform.StopTween();
-            gameObjects[900].StopTweens();
-            //TweenerContext.handler.StopAllTweens(); 
+            TweenerContext.handler.StopAllTweens();
         }
-        //foreach (var obj in gameObjects)
-        //{
-        //    obj.Translate(new Vector3(0.001f, 0.001f, 0.001f));
-        //}
-        //obj.position = vec2;    
-        //Debug.Log(vec2);
-        //lineRenderer.startWidth = 0.1f;
-        //lineRenderer.endWidth = 0.1f;
-        //lineRenderer.positionCount++;
-        //lineRenderer.SetPosition(lineRenderer.positionCount-1, target - obj.transform.position * (endTime-Time.time));
-        // curV = Vector3.Lerp(from, to, tweenable.CurrentDelta01);
-        // Debug.Log(obj.transform.position);
-        // Debug.Log(v.Tween(startV, endV, 30));
-        //Debug.Log(tweenable.CurrentDelta01);
-        // Debug.Log(currentValue);
     }
 }

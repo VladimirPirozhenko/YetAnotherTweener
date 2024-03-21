@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 public static class TaskUtil
@@ -48,12 +46,14 @@ class AsyncTween : ITween
         float startTime = Time.time;
         float elapsed = 0;
         float currentDelta01 = 0;
-        if (duration <= 0)
-            currentDelta01 = 1;
         try
         {
-            while (Application.isPlaying && elapsed < duration)
+            while (elapsed < duration)
             {
+                token.ThrowIfCancellationRequested();
+
+                if (!Application.isPlaying)
+                    break;
                 if (currentValue == to)
                     break;
 
@@ -67,19 +67,20 @@ class AsyncTween : ITween
                     break;
                 }
                 currentDelta01 = easingStrategy.CalculateEasing(currentDelta01);
-                action?.Invoke(currentDelta01);
+                action?.Invoke(currentDelta01);  
 
-                token.ThrowIfCancellationRequested();
                 await Task.Yield();
             }
         }
         catch (OperationCanceledException e)
         {
+            currentDelta01 = 0;
             Debug.Log($"[TweenValueAsync cancelled]: " + e);
         }
         catch (Exception e)
         {
-            Debug.LogError(e);
+            currentDelta01 = 0;
+            Debug.LogError(e);   
         }
         finally
         {
@@ -100,8 +101,10 @@ class AsyncTween : ITween
             currentDelta01 = 1;
         try
         {
-            while (Application.isPlaying && elapsed < duration)
+            while (elapsed < duration)
             {
+                if (!Application.isPlaying)
+                    break;
                 if (currentValue.Equals(to))
                     break;
 
@@ -124,10 +127,12 @@ class AsyncTween : ITween
         }
         catch (OperationCanceledException e)
         {
+            currentDelta01 = 0;
             Debug.Log($"[TweenValueAsync cancelled]: " + e);
         }
         catch (Exception e)
         {
+            currentDelta01 = 0;
             Debug.LogError(e);
         }
         finally
